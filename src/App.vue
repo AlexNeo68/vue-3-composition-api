@@ -1,26 +1,45 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <h1>Composition: {{ capacity }}</h1>
+
+  <button @click="increaseCapacity">Increase</button>
+  <p>Spaces left {{ spaceLeft }} of {{ capacity }}</p>
+  <ul>
+    <li v-for="name in attending" :key="name">{{ name }}</li>
+  </ul>
+
+  <div class="search">
+    <input type="search" v-model="search" />
+    <div>{{ searchResult }}</div>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import { useEventSpace } from "@/use/event-space.js";
+import { ref } from "@vue/reactivity";
+import { watch } from "@vue/runtime-core";
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
-</script>
+  setup() {
+    const { capacity, increaseCapacity, attending, spaceLeft } =
+      useEventSpace();
+    const search = ref("");
+    const searchResult = ref(0);
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+    watch(
+      search,
+      (newVal) => {
+        searchResult.value = newVal.length;
+      },
+      { immediate: true }
+    );
+
+    return {
+      capacity,
+      increaseCapacity,
+      attending,
+      spaceLeft,
+      search,
+      searchResult,
+    };
+  },
+};
+</script>
